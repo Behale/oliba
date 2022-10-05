@@ -12,9 +12,7 @@ defmodule ChatApi.Workers.SyncGmailInbox do
         args: %{"account_id" => account_id, "authorization_id" => authorization_id}
       }) do
     Logger.debug(
-      "Syncing Gmail inbox for account #{inspect(account_id)} with authorization #{
-        inspect(authorization_id)
-      }"
+      "Syncing Gmail inbox for account #{inspect(account_id)} with authorization #{inspect(authorization_id)}"
     )
 
     case Google.get_google_authorization!(authorization_id) do

@@ -24,6 +24,8 @@ defmodule ChatApi.Mattermost.Notification do
           account_id: account_id
         } = message
       ) do
+    Logger.info("Notifying primary channel in mattermost for message #{inspect(message.id)}")
+
     with %{access_token: _access_token, channel_id: _channel_id} = authorization <-
            Mattermost.get_authorization_by_account(account_id) do
       case Mattermost.get_thread_by_conversation_id(conversation_id) do
@@ -33,6 +35,11 @@ defmodule ChatApi.Mattermost.Notification do
         _ ->
           notify_and_create_new_thread(message, authorization)
       end
+    else
+      nil ->
+        Logger.info("No mattermost authorization found for account #{inspect(account_id)}")
+
+        {:ok, nil}
     end
   end
 
@@ -55,6 +62,8 @@ defmodule ChatApi.Mattermost.Notification do
 
   @spec notify_and_create_new_thread(Message.t(), MattermostAuthorization.t()) :: any()
   def notify_and_create_new_thread(message, authorization) do
+    Logger.info("Creating new thread in mattermost (message #{inspect(message.id)})")
+
     with {:ok, %{body: %{"id" => post_id, "channel_id" => channel_id}}} <-
            Mattermost.Client.send_message(
              %{
@@ -64,6 +73,8 @@ defmodule ChatApi.Mattermost.Notification do
              },
              authorization
            ) do
+      Logger.info("Created thread in mattermost (post_root_id #{inspect(post_id.id)})")
+
       Mattermost.create_mattermost_conversation_thread(%{
         mattermost_channel_id: channel_id,
         mattermost_post_root_id: post_id,

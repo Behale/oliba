@@ -38,9 +38,7 @@ defmodule ChatApi.Slack.Event do
       ) do
     if payload_team_id != team do
       Logger.error(
-        "Team IDs on Slack event payload do not match: #{inspect(payload_team_id)} #{
-          inspect(team)
-        } (#{inspect(payload)})"
+        "Team IDs on Slack event payload do not match: #{inspect(payload_team_id)} #{inspect(team)} (#{inspect(payload)})"
       )
     end
 

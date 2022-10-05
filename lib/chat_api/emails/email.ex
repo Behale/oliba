@@ -130,11 +130,7 @@ defmodule ChatApi.Emails.Email do
 
     You've received a new message from your chat with #{company} (#{customer.current_url || ""}):
 
-    #{
-      Enum.map(messages, fn msg ->
-        format_sender(msg, company) <> ": " <> msg.body <> "\n"
-      end)
-    }
+    #{Enum.map(messages, fn msg -> format_sender(msg, company) <> ": " <> msg.body <> "\n" end)}
 
     Best,
     #{from}
@@ -222,11 +218,7 @@ defmodule ChatApi.Emails.Email do
 
     You were mentioned in a message on Papercups:
 
-    #{
-      Enum.map(messages, fn msg ->
-        format_sender(msg, company) <> ": " <> msg.body <> "\n"
-      end)
-    }
+    #{Enum.map(messages, fn msg -> format_sender(msg, company) <> ": " <> msg.body <> "\n" end)}
 
     View in the dashboard at #{dashboard_link}
 

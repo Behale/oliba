@@ -4,6 +4,7 @@ defmodule ChatApi.Messages.Notification do
   """
 
   alias ChatApi.{EventSubscriptions, Lambdas}
+  alias ChatApi.Conversations
   alias ChatApi.Conversations.Conversation
   alias ChatApi.Customers.Customer
   alias ChatApi.Messages.{Helpers, Message}
@@ -86,6 +87,17 @@ defmodule ChatApi.Messages.Notification do
     Logger.info("Sending message notification: :webhooks (message #{inspect(message.id)})")
     # TODO: how should we handle errors/retry logic?
     Task.start(fn ->
+      payload =
+        message
+        |> Helpers.format()
+        |> Map.put(
+          :unread_count,
+          Conversations.count_conversations_where(account_id, %{
+            "status" => "open",
+            "read" => false
+          })
+        )
+
       event = %{
         "event" => "message:created",
         "payload" => Helpers.format(message)
@@ -144,7 +156,9 @@ defmodule ChatApi.Messages.Notification do
 
       _ ->
         Task.start(fn ->
-          ChatApi.Mattermost.Notification.notify_primary_channel(message)
+          {:ok, _} = ChatApi.Mattermost.Notification.notify_primary_channel(message)
+
+          Logger.info("Message notification sent: :mattermost (message #{inspect(message.id)})")
         end)
     end
 
