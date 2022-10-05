@@ -108,6 +108,11 @@ case mailer_adapter do
       # Domain is the email address that mailgun is sent from
       domain: System.get_env("DOMAIN")
 
+  "Swoosh.Adapters.Sendgrid" ->
+    config :chat_api, ChatApi.Mailers,
+      adapter: Swoosh.Adapters.Sendgrid,
+      api_key: System.get_env("SENDGRID_API_KEY")
+
   "Swoosh.Adapters.SMTP" ->
     config :chat_api, ChatApi.Mailers,
       adapter: Swoosh.Adapters.SMTP,

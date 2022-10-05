@@ -15,8 +15,8 @@ jobs:
       - name: Initial setup
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: "1.11.4"
-          otp-version: "23.0.3"
+          elixir-version: "1.13.3"
+          otp-version: "23.3.4"
 
       - name: Install dependencies
         run: mix deps.get
@@ -33,8 +33,8 @@ jobs:
       - name: Initial setup
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: "1.10.4"
-          otp-version: "22.2.6"
+          elixir-version: "1.13.3"
+          otp-version: "23.3.4"
 
       - name: Install dependencies
         run: npm install --prefix assets
@@ -51,8 +51,8 @@ jobs:
       - name: Initial setup
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: "1.10.4"
-          otp-version: "22.2.6"
+          elixir-version: "1.13.3"
+          otp-version: "23.3.4"
 
       - name: Install dependencies
         run: npm install --prefix assets
@@ -88,8 +88,8 @@ jobs:
       - name: Initial setup
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: "1.10.4"
-          otp-version: "22.2.6"
+          elixir-version: "1.13.3"
+          otp-version: "23.3.4"
 
       - name: Install dependencies
         run: mix deps.get
