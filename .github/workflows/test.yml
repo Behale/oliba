@@ -8,7 +8,7 @@ on:
 jobs:
   mix-format:
     name: Mix Format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
@@ -16,7 +16,7 @@ jobs:
         uses: erlef/setup-elixir@v1
         with:
           elixir-version: "1.13.3"
-          otp-version: "23.3.4"
+          otp-version: "23.3"
 
       - name: Install dependencies
         run: mix deps.get
@@ -26,7 +26,7 @@ jobs:
 
   prettier:
     name: Prettier
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
@@ -34,7 +34,7 @@ jobs:
         uses: erlef/setup-elixir@v1
         with:
           elixir-version: "1.13.3"
-          otp-version: "23.3.4"
+          otp-version: "23.3"
 
       - name: Install dependencies
         run: npm install --prefix assets
@@ -44,7 +44,7 @@ jobs:
 
   build-ui:
     name: Build UI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
@@ -52,7 +52,7 @@ jobs:
         uses: erlef/setup-elixir@v1
         with:
           elixir-version: "1.13.3"
-          otp-version: "23.3.4"
+          otp-version: "23.3"
 
       - name: Install dependencies
         run: npm install --prefix assets
@@ -62,7 +62,7 @@ jobs:
 
   mix-test:
     name: Mix Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       MIX_ENV: test
       ELIXIR_ENV: test
@@ -89,7 +89,7 @@ jobs:
         uses: erlef/setup-elixir@v1
         with:
           elixir-version: "1.13.3"
-          otp-version: "23.3.4"
+          otp-version: "23.3"
 
       - name: Install dependencies
         run: mix deps.get
