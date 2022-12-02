@@ -1,4 +1,4 @@
-erlang 23.3
-elixir 1.13.3-otp-23
+erlang 24.2
+elixir 1.13.3-otp-24
 nodejs 16.13.0
 postgres 12.3
