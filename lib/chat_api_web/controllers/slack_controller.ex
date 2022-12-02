@@ -82,44 +82,55 @@ defmodule ChatApiWeb.SlackController do
       # TODO: after creating, check if connected channel is private;
       # If yes, use webhook_url to send notification that Papercups app needs
       # to be added manually, along with instructions for how to do so
-      {:ok, _} =
-        SlackAuthorizations.create_or_update(account_id, filters, %{
-          account_id: account_id,
-          inbox_id: inbox_id,
-          access_token: access_token,
-          app_id: app_id,
-          authed_user_id: authed_user_id,
-          bot_user_id: bot_user_id,
-          scope: scope,
-          token_type: token_type,
-          channel: channel,
-          channel_id: channel_id,
-          configuration_url: configuration_url,
-          team_id: team_id,
-          team_name: team_name,
-          webhook_url: webhook_url,
-          type: integration_type
-        })
+      account_id
+      |> SlackAuthorizations.create_or_update(filters, %{
+        account_id: account_id,
+        inbox_id: inbox_id,
+        access_token: access_token,
+        app_id: app_id,
+        authed_user_id: authed_user_id,
+        bot_user_id: bot_user_id,
+        scope: scope,
+        token_type: token_type,
+        channel: channel,
+        channel_id: channel_id,
+        configuration_url: configuration_url,
+        team_id: team_id,
+        team_name: team_name,
+        webhook_url: webhook_url,
+        type: integration_type
+      })
+      |> case do
+        {:ok, _} ->
+          cond do
+            integration_type == "reply" ->
+              send_private_channel_instructions(:reply, webhook_url)
 
-      cond do
-        integration_type == "reply" ->
-          send_private_channel_instructions(:reply, webhook_url)
+            integration_type == "support" && Slack.Helpers.is_private_slack_channel?(channel_id) ->
+              send_private_channel_instructions(:support, webhook_url)
 
-        integration_type == "support" && Slack.Helpers.is_private_slack_channel?(channel_id) ->
-          send_private_channel_instructions(:support, webhook_url)
+            integration_type == "support" ->
+              send_support_channel_instructions(webhook_url)
 
-        integration_type == "support" ->
-          send_support_channel_instructions(webhook_url)
+            true ->
+              nil
+          end
 
-        true ->
-          nil
+          Slack.Helpers.send_internal_notification(
+            "#{email} successfully linked Slack `#{inspect(integration_type)}` integration to channel `#{channel}`"
+          )
+
+          json(conn, %{data: %{ok: true}})
+
+        {:error, changeset} ->
+          Logger.warn("Error creating Slack authorization: #{inspect(changeset)}")
+
+          Slack.Helpers.send_internal_notification(
+            "#{email} failed to link Slack `#{inspect(integration_type)}` integration to channel `#{channel}`"
+          )
+
+          json(conn, %{data: %{ok: false, errors: changeset.errors}})
       end
-
-      Slack.Helpers.send_internal_notification(
-        "#{email} successfully linked Slack `#{inspect(integration_type)}` integration to channel `#{channel}`"
-      )
-
-      json(conn, %{data: %{ok: true}})
     else
       {:error, :duplicate_channel_id} ->
         conn
