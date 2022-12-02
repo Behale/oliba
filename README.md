@@ -1,25 +1,16 @@
-**:warning: Maintenance Mode**
+# 🦉 Oliba
 
-> _Papercups is in maintenance mode. This means there won't be any major new features in the near future. We will still accept pull requests and conduct major bug fixes. Read more [here](https://papercups.io/blog/papercups-maintenance)_
+Oliba is an open-source multi-stakeholder customer success system that helps you build better relationships with your customers. It's built with [Elixir](https://elixir-lang.org/) and [Phoenix](https://www.phoenixframework.org/) and is currently in **beta**.
 
-# Papercups
+This is a fork of [Papercups](https://papercups.io/) which was placed in [maintenance mode](https://papercups.io/blog/papercups-maintenance). We owe them a debt of gratitude.
 
-Papercups is an open source live customer support tool web app written in Elixir. We offer a hosted version at [app.papercups.io](https://app.papercups.io/).
+## 🚀 Getting Started
 
-You can check out how our chat widget looks and play around with customizing it on our [demo page](https://app.papercups.io/demo/). The chat widget component is also open sourced at [github.com/papercups-io/chat-widget](https://github.com/papercups-io/chat-widget).
-
-_Watch how easy it is to get set up with our Slack integration 🚀 :_
-![slack-setup](https://user-images.githubusercontent.com/4218509/88716918-a0583180-d0d4-11ea-93b3-12437ac51138.gif)
-
-## One click Heroku deployment
+### Easy Deployment
 
 The fastest way to get started is one click deploy on Heroku with:
 
 <a href="https://heroku.com/deploy?template=https://github.com/papercups-io/papercups"><img src="https://www.herokucdn.com/deploy/button.svg" width="200px" /></a>
-
-## Philosophy
-
-We wanted to make a self-hosted customer support tool like Zendesk and Intercom for companies that have privacy and security concerns about having customer data going to third party services.
 
 ## Features
 
@@ -27,34 +18,21 @@ We wanted to make a self-hosted customer support tool like Zendesk and Intercom 
 - **Reply from SMS** - forward Twilio conversations and respond to SMS requests from Papercups
 - **Custom chat widget** - a customizable chat widget you can embed on your website to talk to your customers
 - **React support** - embed the chat widget as a [React component](https://github.com/papercups-io/chat-widget#using-in-react), or a simple [HTML snippet](https://github.com/papercups-io/chat-widget#using-in-html)
-- **React Native support** - embed the chat widget in your [React Native](https://github.com/papercups-io/chat-widget-native#papercups-iochat-widget-native) app
-- **Flutter support** - embed the chat widget in your [Flutter](https://github.com/papercups-io/papercups_flutter) app (courtesy of @aguilaair :heart:)
 - **Slack integration** - connect with Slack, so you can view and reply to messages directly from a Slack channel
-- **Mattermost integration** - connect with [Mattermost](https://docs.papercups.io/reply-from-mattermost), so you can view and reply to messages directly from Mattermost
 - **Markdown and emoji support** - use markdown and emoji to add character to your messages!
 - **Invite your team** - send invite links to your teammates to join your account
 - **Conversation management** - close, assign, and prioritize conversations
 - **Built on Elixir** - optimized for responsiveness, fault-tolerance, and support for realtime updates
 
-## Demo
-
-We set up a [simple page](https://app.papercups.io/demo) that demonstrates how Papercups works.
-
-Try sending us a message to see what the chat experience is like!
-
-## Blog
-
-Check out our [blog](https://papercups.io/blog) for more updates and learnings
-
 ## Documentation
 
 Check out our docs at [docs.papercups.io](https://docs.papercups.io/)
 
-## Contributing
+## Contributing (Papercups)
 
 We :heart: contributions big or small. See [CONTRIBUTING.md](https://github.com/papercups-io/papercups/blob/master/CONTRIBUTING.md) for a guide on how to get started.
 
-## Thanks to all of our contributors!
+## Thanks to all of Papercups contributors!
 
 <td>
 <a href="https://github.com/reichert621"><img src="https://avatars0.githubusercontent.com/u/5264279?v=4" title="reichert621" width="80" height="80"></a>
