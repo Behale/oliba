@@ -1,4 +1,4 @@
-# Papercups UI
+# Oliba UI
 
 The React frontend for Papercups
 
