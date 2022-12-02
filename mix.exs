@@ -64,7 +64,7 @@ defmodule ChatApi.MixProject do
       {:joken, "~> 2.0"},
       {:plug_cowboy, "~> 2.0"},
       {:corsica, "~> 1.0"},
-      {:pow, "~> 1.0.18"},
+      {:pow, "~> 1.0.27"},
       {:stripity_stripe, "~> 2.0"},
       {:oban, "~> 2.1.0"},
       {:sentry, "8.0.0"},
