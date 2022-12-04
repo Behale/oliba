@@ -9,7 +9,11 @@ defmodule ChatApi.Slack.Client do
 
   plug(Tesla.Middleware.BaseUrl, "https://slack.com/api")
 
-  plug(Tesla.Middleware.FormUrlencoded)
+  plug(Tesla.Middleware.FormUrlencoded,
+    encode: &Plug.Conn.Query.encode/1,
+    decode: &Plug.Conn.Query.decode/1
+  )
+
   plug(Tesla.Middleware.JSON)
 
   plug(Tesla.Middleware.Logger)
