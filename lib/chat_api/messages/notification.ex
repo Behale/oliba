@@ -47,13 +47,6 @@ defmodule ChatApi.Messages.Notification do
     Logger.info("Sending message notification: :slack (message #{inspect(message.id)})")
 
     case opts do
-      # TODO: deprecate this option
-      [metadata: %{"send_to_reply_channel" => false}] ->
-        nil
-
-      [send_to_reply_channel: false] ->
-        nil
-
       [async: false] ->
         ChatApi.Slack.Notification.notify_primary_channel(message)
 
@@ -100,7 +93,7 @@ defmodule ChatApi.Messages.Notification do
 
       event = %{
         "event" => "message:created",
-        "payload" => Helpers.format(message)
+        "payload" => payload
       }
 
       EventSubscriptions.notify_event_subscriptions(account_id, event)

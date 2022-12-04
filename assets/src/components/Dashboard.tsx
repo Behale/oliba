@@ -212,7 +212,7 @@ const DashboardHtmlHead = ({totalNumUnread}: {totalNumUnread: number}) => {
         `(${totalNumUnread}) New message${totalNumUnread === 1 ? '' : 's'}!`
       );
     } else {
-      setHtmlTitle('Papercups');
+      setHtmlTitle('Oliba');
     }
   };
 

@@ -73,7 +73,7 @@ defmodule ChatApi.Mattermost.Notification do
              },
              authorization
            ) do
-      Logger.info("Created thread in mattermost (post_root_id #{inspect(post_id.id)})")
+      Logger.info("Created thread in mattermost (post_root_id #{inspect(post_id)})")
 
       Mattermost.create_mattermost_conversation_thread(%{
         mattermost_channel_id: channel_id,
