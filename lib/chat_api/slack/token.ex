@@ -7,6 +7,7 @@ defmodule ChatApi.Slack.Token do
   def is_valid_access_token?(token) do
     case token do
       "xoxb-" <> _rest -> true
+      "xoxe.xoxb-" <> _rest -> true
       _ -> false
     end
   end
