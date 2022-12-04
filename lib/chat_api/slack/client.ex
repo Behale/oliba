@@ -9,11 +9,6 @@ defmodule ChatApi.Slack.Client do
 
   plug(Tesla.Middleware.BaseUrl, "https://slack.com/api")
 
-  plug(Tesla.Middleware.FormUrlencoded,
-    encode: &Plug.Conn.Query.encode/1,
-    decode: &Plug.Conn.Query.decode/1
-  )
-
   plug(Tesla.Middleware.JSON)
 
   plug(Tesla.Middleware.Logger)
@@ -79,7 +74,8 @@ defmodule ChatApi.Slack.Client do
     if should_execute?(access_token) do
       post("/chat.postMessage", message,
         headers: [
-          {"Authorization", "Bearer " <> access_token}
+          {"Authorization", "Bearer " <> access_token},
+          {"Content-Type", "application/json"}
         ]
       )
     else
@@ -263,12 +259,15 @@ defmodule ChatApi.Slack.Client do
   def refresh_bot_token(refresh_token \\ nil) do
     post(
       "/oauth.v2.access",
-      %{
+      Plug.Conn.Query.encode(%{
         client_id: System.get_env("PAPERCUPS_SLACK_CLIENT_ID"),
         client_secret: System.get_env("PAPERCUPS_SLACK_CLIENT_SECRET"),
         refresh_token: refresh_token || System.get_env("PAPERCUPS_SLACK_BOT_REFRESH_TOKEN"),
         grant_type: "refresh_token"
-      }
+      }),
+      headers: [
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
     )
   end
 
