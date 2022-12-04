@@ -200,11 +200,11 @@ const ChatWithUs = ({
 // tab (i.e. HTML title) so users can see when new messages arrive
 const DashboardHtmlHead = ({totalNumUnread}: {totalNumUnread: number}) => {
   const doc = document || window.document;
-  const [htmlTitle, setHtmlTitle] = useState('Papercups');
+  const [htmlTitle, setHtmlTitle] = useState('Oliba');
   const isWindowVisible = useWindowVisibility(doc);
   const timer = useRef<any>();
 
-  const hasDefaultTitle = (title: string) => title.startsWith('Papercups');
+  const hasDefaultTitle = (title: string) => title.startsWith('Oliba');
 
   const toggleNotificationMessage = () => {
     if (totalNumUnread > 0 && hasDefaultTitle(htmlTitle) && !isWindowVisible) {
@@ -234,7 +234,7 @@ const DashboardHtmlHead = ({totalNumUnread}: {totalNumUnread: number}) => {
 
   return (
     <Helmet defer={false}>
-      <title>{totalNumUnread ? htmlTitle : 'Papercups'}</title>
+      <title>{totalNumUnread ? htmlTitle : 'Oliba'}</title>
     </Helmet>
   );
 };

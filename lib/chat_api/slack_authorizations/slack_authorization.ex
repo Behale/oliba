@@ -8,6 +8,8 @@ defmodule ChatApi.SlackAuthorizations.SlackAuthorization do
 
   @type t :: %__MODULE__{
           access_token: String.t(),
+          refresh_token: String.t() | nil,
+          expires_at: DateTime.t() | nil,
           type: String.t() | nil,
           app_id: String.t() | nil,
           authed_user_id: String.t() | nil,
@@ -50,6 +52,9 @@ defmodule ChatApi.SlackAuthorizations.SlackAuthorization do
     field(:webhook_url, :string)
     field(:metadata, :map)
 
+    field(:refresh_token, :string)
+    field(:expires_at, :utc_datetime)
+
     embeds_one(:settings, Settings, on_replace: :delete)
 
     belongs_to(:account, Account)
@@ -66,6 +71,8 @@ defmodule ChatApi.SlackAuthorizations.SlackAuthorization do
       :inbox_id,
       :type,
       :access_token,
+      :refresh_token,
+      :expires_at,
       :app_id,
       :authed_user_id,
       :bot_user_id,

@@ -9,11 +9,9 @@ defmodule ChatApi.Slack.Client do
 
   plug(Tesla.Middleware.BaseUrl, "https://slack.com/api")
 
-  plug(Tesla.Middleware.Headers, [
-    {"content-type", "application/json; charset=utf-8"}
-  ])
-
+  plug(Tesla.Middleware.FormUrlencoded)
   plug(Tesla.Middleware.JSON)
+
   plug(Tesla.Middleware.Logger)
 
   @spec get_access_token(binary()) :: Tesla.Env.result()
@@ -22,7 +20,11 @@ defmodule ChatApi.Slack.Client do
     client_secret = System.get_env("PAPERCUPS_SLACK_CLIENT_SECRET")
 
     get("/oauth.v2.access",
-      query: [code: code, client_id: client_id, client_secret: client_secret]
+      query: [
+        code: code,
+        client_id: client_id,
+        client_secret: client_secret
+      ]
     )
   end
 
@@ -252,6 +254,18 @@ defmodule ChatApi.Slack.Client do
 
       {:ok, nil}
     end
+  end
+
+  def refresh_bot_token(refresh_token \\ nil) do
+    post(
+      "/oauth.v2.access",
+      %{
+        client_id: System.get_env("PAPERCUPS_SLACK_CLIENT_ID"),
+        client_secret: System.get_env("PAPERCUPS_SLACK_CLIENT_SECRET"),
+        refresh_token: refresh_token || System.get_env("PAPERCUPS_SLACK_BOT_REFRESH_TOKEN"),
+        grant_type: "refresh_token"
+      }
+    )
   end
 
   @spec should_execute?(binary()) :: boolean()

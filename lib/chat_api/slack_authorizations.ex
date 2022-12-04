@@ -16,15 +16,23 @@ defmodule ChatApi.SlackAuthorizations do
     |> where(^filter_where(filters))
     |> order_by(desc: :inserted_at)
     |> Repo.all()
+    |> Enum.map(&maybe_refresh_authorization/1)
   end
 
   @spec list_slack_authorizations_by_account(binary(), map()) :: [SlackAuthorization.t()]
   def list_slack_authorizations_by_account(account_id, filters \\ %{}) do
-    filters |> Map.merge(%{account_id: account_id}) |> list_slack_authorizations()
+    filters
+    |> Map.merge(%{account_id: account_id})
+    |> list_slack_authorizations()
+    |> Enum.map(&maybe_refresh_authorization/1)
   end
 
   @spec get_slack_authorization!(binary()) :: SlackAuthorization.t()
-  def get_slack_authorization!(id), do: Repo.get!(SlackAuthorization, id)
+  def get_slack_authorization!(id) do
+    SlackAuthorization
+    |> Repo.get!(id)
+    |> maybe_refresh_authorization()
+  end
 
   @spec find_slack_authorization(map()) :: SlackAuthorization.t() | nil
   def find_slack_authorization(filters \\ %{}) do
@@ -33,6 +41,7 @@ defmodule ChatApi.SlackAuthorizations do
     |> order_by(desc: :inserted_at)
     |> first()
     |> Repo.one()
+    |> maybe_refresh_authorization()
   end
 
   @spec get_authorization_by_account(binary(), map()) :: SlackAuthorization.t() | nil
@@ -43,6 +52,7 @@ defmodule ChatApi.SlackAuthorizations do
     |> order_by(desc: :inserted_at)
     |> first()
     |> Repo.one()
+    |> maybe_refresh_authorization()
   end
 
   @spec create_or_update(binary(), map(), map()) ::
@@ -188,11 +198,54 @@ defmodule ChatApi.SlackAuthorizations do
     end
   end
 
+  def maybe_refresh_authorization(nil), do: nil
+
+  def maybe_refresh_authorization(%SlackAuthorization{} = authorization) do
+    with expires_at when not is_nil(expires_at) <- authorization.expires_at,
+         true <- expires_at < DateTime.utc_now(),
+         {:ok, new_authorization} <- refresh_authorization(authorization) do
+      new_authorization
+    else
+      _ ->
+        authorization
+    end
+  end
+
+  def refresh_authorization(%SlackAuthorization{} = authorization) do
+    case Slack.Client.refresh_bot_token(authorization.refresh_token) do
+      {:ok,
+       %{
+         status: 200,
+         body: %{
+           "access_token" => access_token,
+           "refresh_token" => refresh_token,
+           "expires_in" => expires_in,
+           "token_type" => token_type
+         }
+       }} ->
+        update_slack_authorization(authorization, %{
+          access_token: access_token,
+          refresh_token: refresh_token,
+          token_type: token_type,
+          expires_at: DateTime.utc_now() |> DateTime.add(expires_in)
+        })
+
+      {:ok, result} ->
+        {:error, result}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
   # Pulled from https://hexdocs.pm/ecto/dynamic-queries.html#building-dynamic-queries
   defp filter_where(params) do
     Enum.reduce(params, dynamic(true), fn
       {:account_id, value}, dynamic ->
         dynamic([r], ^dynamic and r.account_id == ^value)
+
+      {:access_token, value}, dynamic ->
+        dynamic([r], ^dynamic and r.access_token == ^value)
 
       # TODO: should inbox_id be a required field?
       {:inbox_id, nil}, dynamic ->

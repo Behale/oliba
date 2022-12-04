@@ -36,6 +36,10 @@ export type IntegrationType = {
 };
 
 export const getSlackRedirectUrl = () => {
+  if (isDev) {
+    return 'https://4ed5-191-193-79-249.sa.ngrok.io';
+  }
+
   const origin = window.location.origin;
 
   return `${origin}/integrations/slack`;

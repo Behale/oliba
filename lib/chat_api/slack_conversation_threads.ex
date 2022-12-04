@@ -142,15 +142,34 @@ defmodule ChatApi.SlackConversationThreads do
           slack_channel: channel
         } = slack_conversation_thread
       ) do
-    with %{access_token: access_token} <-
-           find_matching_slack_authorization(slack_conversation_thread),
-         {:ok, response} <- Slack.Client.retrieve_channel_info(channel, access_token),
-         %{body: %{"channel" => %{"name" => slack_channel_name}}} <- response do
-      slack_channel_name
-    else
-      error ->
+    case find_matching_slack_authorization(slack_conversation_thread) do
+      %{access_token: access_token} = authorization ->
+        with {:ok, response} <- Slack.Client.retrieve_channel_info(channel, access_token),
+             %{body: %{"channel" => %{"name" => slack_channel_name}}} <- response do
+          slack_channel_name
+        else
+          %{body: %{"error" => "token_expired"}} ->
+            Logger.info("Token expired for Slack")
+
+            refresh_authorization_and_retry(
+              authorization,
+              &get_slack_conversation_thread_channel_name/1,
+              [
+                slack_conversation_thread
+              ]
+            )
+
+          error ->
+            Logger.info(
+              "Could not get channel name for Slack thread #{inspect(slack_conversation_thread)} -- #{inspect(error)}"
+            )
+
+            nil
+        end
+
+      _ ->
         Logger.info(
-          "Could not get channel name for Slack thread #{inspect(slack_conversation_thread)} -- #{inspect(error)}"
+          "Could not get channel name for Slack thread #{inspect(slack_conversation_thread)} -- no matching authorization"
         )
 
         nil
@@ -164,16 +183,47 @@ defmodule ChatApi.SlackConversationThreads do
           slack_thread_ts: ts
         } = slack_conversation_thread
       ) do
-    with %{access_token: access_token} <-
-           find_matching_slack_authorization(slack_conversation_thread),
-         {:ok, response} <- Slack.Client.get_message_permalink(channel, ts, access_token),
-         %{body: %{"permalink" => permalink}} <- response do
-      permalink
-    else
-      error ->
+    case find_matching_slack_authorization(slack_conversation_thread) do
+      %SlackAuthorization{access_token: access_token} = authorization ->
+        with {:ok, response} <- Slack.Client.get_message_permalink(channel, ts, access_token),
+             %{body: %{"permalink" => permalink}} <- response do
+          permalink
+        else
+          %{body: %{"error" => "token_expired"}} ->
+            Logger.info("Token expired for Slack")
+
+            refresh_authorization_and_retry(
+              authorization,
+              &get_slack_conversation_thread_permalink/1,
+              [
+                slack_conversation_thread
+              ]
+            )
+
+          error ->
+            Logger.info(
+              "Could not get permalink for Slack thread #{inspect(slack_conversation_thread)} -- #{inspect(error)}"
+            )
+
+            nil
+        end
+
+      nil ->
         Logger.info(
-          "Could not get permalink for Slack thread #{inspect(slack_conversation_thread)} -- #{inspect(error)}"
+          "Could not get permalink for Slack thread #{inspect(slack_conversation_thread)} -- no matching Slack authorization"
         )
+
+        nil
+    end
+  end
+
+  defp refresh_authorization_and_retry(authorization, fun, args) do
+    case SlackAuthorizations.refresh_authorization(authorization) do
+      {:ok, _} ->
+        apply(fun, args)
+
+      {:error, reason} ->
+        Logger.warn("Could not refresh Slack authorization #{inspect(reason)}")
 
         nil
     end

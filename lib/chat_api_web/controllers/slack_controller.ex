@@ -48,7 +48,9 @@ defmodule ChatApiWeb.SlackController do
            "token_type" => token_type,
            "authed_user" => authed_user,
            "team" => team,
-           "incoming_webhook" => incoming_webhook
+           "incoming_webhook" => incoming_webhook,
+           "refresh_token" => refresh_token,
+           "expires_in" => expires_in
          } <- body,
          %{"id" => authed_user_id} <- authed_user,
          %{"id" => team_id, "name" => team_name} <- team,
@@ -87,6 +89,8 @@ defmodule ChatApiWeb.SlackController do
         account_id: account_id,
         inbox_id: inbox_id,
         access_token: access_token,
+        refresh_token: refresh_token,
+        expires_at: DateTime.utc_now() |> DateTime.add(expires_in, :second),
         app_id: app_id,
         authed_user_id: authed_user_id,
         bot_user_id: bot_user_id,
